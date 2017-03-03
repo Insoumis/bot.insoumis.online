@@ -1,0 +1,34 @@
+# Install these dependencies using:
+#   pip install -r requirements.txt
+# Update this file using:
+#   pip freeze -r requirements.txt
+
+# Note:
+# If "InsecurePlatformWarning: A true SSLContext object is not available." try:
+#   pip install requests[security]
+
+colorama==0.3.7
+termcolor==1.1.0
+requests==2.13.0
+python-dateutil==2.6.0
+isodate==0.5.4
+strict-rfc3339==0.7
+python-slugify==1.2.1
+google-api-python-client==1.6.2
+PyGithub==1.32
+
+# The following requirements were added automatically by pip freeze
+Unidecode==0.4.20
+argparse==1.2.1
+ecdsa==0.13
+future==0.16.0
+httplib2==0.10.3
+oauth2client==4.0.0
+pyasn1==0.2.3
+pyasn1-modules==0.0.8
+pycrypto==2.6.1
+python-jose==1.3.2
+rsa==3.4.2
+six==1.10.0
+uritemplate==3.0.0
+wsgiref==0.1.2
