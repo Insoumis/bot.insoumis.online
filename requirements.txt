@@ -16,8 +16,14 @@ strict-rfc3339==0.7
 python-slugify==1.2.1
 google-api-python-client==1.6.2
 PyGithub==1.32
+Flask==0.12
 
 # The following requirements were added automatically by pip freeze
+Jinja2==2.9.5
+MarkupSafe==0.23
+Werkzeug==0.11.15
+click==6.7
+itsdangerous==0.24
 Unidecode==0.4.20
 argparse==1.2.1
 ecdsa==0.13
