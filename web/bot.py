@@ -14,12 +14,12 @@ from lib.github import GITHUB_API_KEY
 THIS_DIRECTORY = os.path.abspath(os.path.dirname(__file__))
 GITHUB_REPO = "jlm2017/jlm-video-subtitles"
 
-labels_columns = [                    # [fr, en]
-    ("Process: [0] Awaiting subtitles", [398411, 387590]),
-    ("Process: [1] Writing in progress", [398412, 387592]),
-    ("Process: [2] Ready for review (1)", [398414, 654829]),
-    ("Process: [4] Ready for review (2)", [398416, 387597]),
-    ("Process: [6] Approved", [398417, 390130]),
+labels_columns = [                    # [fr, en, de]
+    ("Process: [0] Awaiting subtitles", [398411, 387590, 654910]),
+    ("Process: [1] Writing in progress", [398412, 387592, 654907]),
+    ("Process: [2] Ready for review (1)", [398414, 654829, 654913]),
+    ("Process: [4] Ready for review (2)", [398416, 387597, 654916]),
+    ("Process: [6] Approved", [398417, 390130, 654919]),
 ]
 
 # FLASK APP ###################################################################
