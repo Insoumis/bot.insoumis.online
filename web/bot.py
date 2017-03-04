@@ -78,15 +78,17 @@ def labellize():
     :return:
     """
     # https://developer.github.com/v3/activity/events/types/#projectcardevent
-    payload = request.get_json()
+    payload = request.get_json(silent=True)
+    if not payload:
+        log.error(u"Invalid payload:\n%s" % request.get_data())
+        abort(400)
     log.debug(u"Received payload:\n%s" % json.dumps(payload, indent=2))
 
-    provided_digest = request.headers.get('X-Hub-Signature')
-
+    provided_digest = request.headers.get('X-Hub-Signature', default='')
     h = hmac.new(GITHUB_SECRET, msg=request.get_data(), digestmod=sha1)
     expected_digest = "sha1=%s" % h.hexdigest()
     if not hmac.compare_digest(provided_digest, expected_digest):
-        log.error("Hub signature digest mismatch: %s != %s"
+        log.error(u"Hub signature digest mismatch: %s != %s"
                   % (provided_digest, expected_digest))
         abort(403)
 
@@ -96,10 +98,15 @@ def labellize():
         content_url = payload['project_card']['content_url']
         m = re.search("([0-9]+)$", content_url)
         if not m:
-            log.error(u"No issue id in content url '%s' for card %d.",
-                      (content_url, card_id))
+            # It's probably not an issue card, but a standalone card
+            log.warn(u"No issue id in content url '%s' for card %d.",
+                     (content_url, card_id))
             return ''
         issue_number = int(m.group(1))
+
+        blacklist = [1]
+        if issue_number in blacklist:
+            return ''
 
         log.info(u"Moved card %d (issue #%d) to column %d."
                  % (card_id, issue_number, column_id))
@@ -119,10 +126,10 @@ def labellize():
                 labels_to_remove.append(_label)
 
         for label in labels_to_remove:
-            log.info("Added '%s' to issue #%d" % (label, issue_number))
+            log.info(u"Added '%s' to issue #%d" % (label, issue_number))
             issue.remove_from_labels(label)
         for label in labels_to_add:
-            log.info("Removed '%s' from issue #%d" % (label, issue_number))
+            log.info(u"Removed '%s' from issue #%d" % (label, issue_number))
             issue.add_to_labels(label)
 
     return ''
