@@ -39,7 +39,7 @@ if [ ${PIPESTATUS[0]} -ne 0 ] ; then
 fi
 
 
-bin/suffix-commit.py > suffix-commit.out &> suffix-commit.err
+bin/suffix-commit.py 2> suffix-commit.err 1> suffix-commit.out
 suffix_commit_code=$?
 suffix=$(<suffix-commit.out)
 
@@ -52,7 +52,7 @@ fi
 cd jlm-video-subtitles
 
 git add subtitles
-git commit -m "Sauvegarde du ${today}.\n${suffix}"
+git commit -m "Sauvegarde du ${today}.${suffix}"
 git push origin master |& tee ../git-push.log
 
 if [ ${PIPESTATUS[0]} -ne 0 ] ; then

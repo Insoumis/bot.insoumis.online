@@ -33,8 +33,8 @@ if __name__ == "__main__":
         parents=[youtube_argparser], add_help=False,
         description="""
         Returns the #numbers of the issues related to the captions files that
-        were added or modified. This is used in the commit message.
-        Example of string returned to stdout : 'Closes #229\\nCloses #184'
+        were added or modified. This is appended to the commit message.
+        Example of string returned to stdout : ' Closes #229. Closes #184.'
         """,
         epilog="""
         © WTFPL 2017 - YOU ARE FREE TO DO WHAT THE FORK YOU WANT
@@ -133,10 +133,10 @@ if __name__ == "__main__":
                 found = issue.number
                 break
         if found:
-            output_lines.append("Closes #%d" % found)
+            output_lines.append(" Closes #%d." % found)
 
     if output_lines:
-        print("\n".join(output_lines))
+        print(''.join(output_lines))
 
 
 
