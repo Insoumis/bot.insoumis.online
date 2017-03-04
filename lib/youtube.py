@@ -349,7 +349,10 @@ class Caption:
             filepath=filepath,
             id=metas['Caption'],
             video_id=metas['Video'],
-            language=metas['Language'],
+            # ISO-639-1 (2 lowercase letters language code),
+            # sometimes followed by a dash - and a
+            # ISO-3166 (2 uppercase letters country code)
+            language=metas['Language'],  # <ISO-639-1>[-<ISO-3166>]
             modified_at=dateutil.parser.parse(metas['LastUpdated'])
         )
 

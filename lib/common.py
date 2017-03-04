@@ -42,3 +42,17 @@ def get_downloaded_captions_and_videos(captions_directory):
     videos = parse_videos_from_json(videos)
 
     return captions, videos
+
+
+def remove_country_code(language):
+    """
+    Returns only the ISO-639-1 language part of the provided language string,
+    that may also contain a ISO-3166 country part as suffix.
+    :param language:
+    :return:
+    """
+    if '-' in language:
+        return language.split('-')[0]
+    if '_' in language:
+        return language.split('_')[0]
+    return language

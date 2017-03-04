@@ -17,8 +17,7 @@ THIS_DIRECTORY = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(THIS_DIRECTORY, '..')))
 
 from lib.github import GITHUB_API_KEY
-from lib.common import get_downloaded_captions_and_videos
-
+from lib.common import get_downloaded_captions_and_videos, remove_country_code
 
 # CONFIG ######################################################################
 
@@ -159,7 +158,7 @@ if __name__ == "__main__":
 
     for video, caption in zip(videos, captions):
 
-        language = caption.language
+        language = remove_country_code(caption.language)
         issue_title = "[subtitles] [%s] %s" % (language, video.title)
 
         for issue in issues:
@@ -176,6 +175,10 @@ if __name__ == "__main__":
                     log.warn("Issue #%d has no card we could find."
                              % issue_number)
                     continue
+                if language not in APPROVAL_COLUMNS:
+                    log.warn("Issue #%d is not in a supported language: %s."
+                             % (issue_number, language))
+                    break
                 column_id = APPROVAL_COLUMNS[language]
                 print("Move card %d to column %d..."
                       % (card_id, column_id))
