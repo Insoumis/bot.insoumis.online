@@ -16,7 +16,7 @@ from lib.github import GITHUB_API_KEY
 THIS_DIRECTORY = os.path.abspath(os.path.dirname(__file__))
 GITHUB_REPO = "jlm2017/jlm-video-subtitles"
 
-labels_columns = [                    # [fr, en, de]
+LABELS_COLUMNS = [                    # [fr, en, de]
     ("Process: [0] Awaiting subtitles", [398411, 387590, 654910]),
     ("Process: [1] Writing in progress", [398412, 387592, 654907]),
     ("Process: [2] Ready for review (1)", [398414, 654829, 654913]),
@@ -56,8 +56,10 @@ except IOError:
 
 # UTILS #######################################################################
 
-log.basicConfig(filename=os.path.join(app.root_path, 'bot.log'),
-                level=log.INFO)
+log.basicConfig(
+    filename=os.path.join(app.root_path, 'bot.log'),
+    level=log.INFO
+)
 
 
 # ROUTES ######################################################################
@@ -119,11 +121,11 @@ def labellize():
 
         labels_to_add = []
         labels_to_remove = []
-        for _label, _column_ids in labels_columns:
-            if column_id in _column_ids and _label not in issue_labels:
-                labels_to_add.append(_label)
-            if column_id not in _column_ids and _label in issue_labels:
-                labels_to_remove.append(_label)
+        for label, column_ids in LABELS_COLUMNS:
+            if column_id in column_ids and label not in issue_labels:
+                labels_to_add.append(label)
+            if column_id not in column_ids and label in issue_labels:
+                labels_to_remove.append(label)
 
         for label in labels_to_remove:
             log.info(u"Added '%s' to issue #%d" % (label, issue_number))
