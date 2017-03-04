@@ -38,11 +38,13 @@ if [ ${PIPESTATUS[0]} -ne 0 ] ; then
   exit 1
 fi
 
+suffix=$(bin/suffix-commit.py)
+
 cd jlm-video-subtitles
 
 git add subtitles
 
-git commit -m "Sauvegarde du ${today}."
+git commit -m "Sauvegarde du ${today}.\n${suffix}"
 
 git push origin master |& tee ../git-push.log
 

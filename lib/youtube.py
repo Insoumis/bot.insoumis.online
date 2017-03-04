@@ -348,6 +348,7 @@ class Caption:
         return Caption(
             filepath=filepath,
             id=metas['Caption'],
+            video_id=metas['Video'],
             language=metas['Language'],
             modified_at=dateutil.parser.parse(metas['LastUpdated'])
         )
