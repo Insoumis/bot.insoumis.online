@@ -38,14 +38,21 @@ if [ ${PIPESTATUS[0]} -ne 0 ] ; then
   exit 1
 fi
 
-suffix=$(bin/suffix-commit.py)
+
+bin/suffix-commit.py > suffix-commit.out &> suffix-commit.err
+suffix_commit_code=$?
+suffix=$(<suffix-commit.out)
+
+if [ ${suffix_commit_code} -ne 0 ] ; then
+  cat suffix-commit.err | mail -s "${title} Suffix Failure" ${email}
+  exit 1
+fi
+
 
 cd jlm-video-subtitles
 
 git add subtitles
-
 git commit -m "Sauvegarde du ${today}.\n${suffix}"
-
 git push origin master |& tee ../git-push.log
 
 if [ ${PIPESTATUS[0]} -ne 0 ] ; then

@@ -16,8 +16,7 @@ from oauth2client.tools import argparser as youtube_argparser
 THIS_DIRECTORY = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(THIS_DIRECTORY, '..')))
 
-from lib.youtube import get_authenticated_service, Caption, get_videos, \
-    parse_videos_from_json
+from lib.youtube import Caption, get_videos, parse_videos_from_json
 from lib.github import GITHUB_API_KEY
 
 # CONFIG ######################################################################
@@ -52,7 +51,8 @@ if __name__ == "__main__":
     )
 
     argparser.add_argument(
-        "--directory", dest="data_directory", default="../jlm-video-subtitles/subtitles",
+        "--directory", dest="data_directory",
+        default="../jlm-video-subtitles/subtitles",
         help="""
         The directory where the captions files are.
         This is either an absolute path (when starting with /),
@@ -94,23 +94,13 @@ if __name__ == "__main__":
 
     caption_extension = args.extension
 
-    # youtube = get_authenticated_service(args)
-
-    # print("Looking through files added to '%s'..." % captions_directory)
-
     files_raw = check_output(
         ["git add -n ."], shell=True, cwd=captions_directory
     )
-
     git_added_paths = re.findall("^add '(.+)'$", files_raw, flags=re.MULTILINE)
-
-    # from pprint import pprint
-    # pprint(git_added_paths)
 
     if 0 == len(git_added_paths):
         exit(0)
-
-    output_lines = []  # eg: "Closes #229\nCloses #184"
 
     captions = []
     for git_caption_path in git_added_paths:
@@ -129,9 +119,11 @@ if __name__ == "__main__":
 
     gh = Github(GITHUB_API_KEY)
     repo = gh.get_repo(args.repository)
-    issues = [issue for issue in repo.get_issues()]  # no laziness !
+    issues = [issue for issue in repo.get_issues()]  # memoize it
 
+    output_lines = []
     for video, caption in zip(videos, captions):
+
         language = caption.language
         issue_title = "[subtitles] [%s] %s" % (language, video.title)
 
