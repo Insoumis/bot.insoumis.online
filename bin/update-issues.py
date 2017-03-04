@@ -168,7 +168,7 @@ if __name__ == "__main__":
                 # Hack continued... :p
                 card_id = None
                 for card in cards:
-                    if card['issue_number'] == issue_number:
+                    if card['issue_number'] == issue.number:
                         card_id = card['id']
                         break
                 if not card_id:
