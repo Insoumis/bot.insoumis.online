@@ -22,6 +22,7 @@ source venv/bin/activate
 #   User git
 #   IdentityFile ~/.ssh/RobotInsoumis/id_rsa
 
+# Grab a fresh copy of the subtitles from the official github repo
 rm -Rf jlm-video-subtitles/
 git clone git@insoumis.github.com:jlm2017/jlm-video-subtitles.git
 cd jlm-video-subtitles
@@ -29,6 +30,8 @@ git config user.name RobotInsoumis
 git config user.email robot.insoumis@gmail.com
 cd ..
 
+
+# Download the subtitles from youtube
 python bin/youtube.py --action download \
                       --directory ../jlm-video-subtitles/subtitles \
                       |& tee download.log
@@ -39,7 +42,21 @@ if [ ${PIPESTATUS[0]} -ne 0 ] ; then
 fi
 
 
-bin/suffix-commit.py 2> suffix-commit.err 1> suffix-commit.out
+# Move cards around accordingly
+python bin/update-issues.py |& tee update-issues.log
+
+if [ ${PIPESTATUS[0]} -ne 0 ] ; then
+  cat update-issues.log | mail -s "${title} Update Failure" ${email}
+  exit 1
+fi
+
+
+# Give time to our webhook (it usually needs about 3 seconds total)
+sleep 10
+
+
+# Compute the commit message suffix, ex: "Closes #245. Closes #124"
+python bin/suffix-commit.py 2> suffix-commit.err 1> suffix-commit.out
 suffix_commit_code=$?
 suffix=$(<suffix-commit.out)
 
@@ -49,6 +66,7 @@ if [ ${suffix_commit_code} -ne 0 ] ; then
 fi
 
 
+# Commit and push to the official github repo
 cd jlm-video-subtitles
 
 git add subtitles
