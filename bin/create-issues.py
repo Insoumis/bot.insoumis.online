@@ -195,7 +195,7 @@ if __name__ == "__main__":
     # )
     # pprint(data)
 
-    issues = repo.get_issues()
+    issues = [issue for issue in repo.get_issues()]  # no laziness !
 
     labels = {}
     for language in languages:
