@@ -30,7 +30,7 @@ bin/create-issues.sh --videos VIDEO_ID_1 VIDEO_ID_2 ...
 
 ## It's also a webhook for github
 
-Available at https://bot.insoumis.online
+An example of it is running at https://bot.insoumis.online
 
 It's a simple flask app.
 

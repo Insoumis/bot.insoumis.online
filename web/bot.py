@@ -2,8 +2,10 @@
 import re
 import os
 import json
+import hmac
 import logging as log
-from flask import Flask, send_from_directory, request
+from hashlib import sha1
+from flask import Flask, send_from_directory, request, abort
 from github import Github
 
 from lib.github import GITHUB_API_KEY
@@ -22,9 +24,34 @@ labels_columns = [                    # [fr, en, de]
     ("Process: [6] Approved", [398417, 390130, 654919]),
 ]
 
+
 # FLASK APP ###################################################################
 
 app = Flask('RobotInsoumis', root_path=THIS_DIRECTORY)
+app.debug = os.environ.get('DEBUG') == 'true'
+
+# SECRET ######################################################################
+
+GITHUB_SECRET_FILE = os.path.abspath(os.path.join(
+    os.path.dirname(__file__), '..', 'config', 'github-webhook-secret.txt'
+))
+
+MISSING_GITHUB_SECRET_FILE = """
+ERROR : Github webhook secret missing.
+
+How to get a Github webhook secret:
+  1) Set up a webhook
+  2) Choose a secret
+  3) Copy it to %s
+""" % GITHUB_SECRET_FILE
+
+GITHUB_SECRET = ""
+try:
+    with open(GITHUB_SECRET_FILE) as secret_file:
+        GITHUB_SECRET = secret_file.read().strip()
+except IOError:
+    log.error(MISSING_GITHUB_SECRET_FILE)
+    exit(1)
 
 
 # UTILS #######################################################################
@@ -37,7 +64,10 @@ log.basicConfig(filename=os.path.join(app.root_path, 'bot.log'),
 
 @app.route('/')
 def home():
-    return u"Can't stenchon the mélenchon! Robot Résistance!"
+    return u"Can't stenchon the mélenchon! " \
+           u"<a href=\"https://github.com/Goutte/youtube-captions-bot\">" \
+           u"View the source." \
+           u"</a>"
 
 
 @app.route('/labellize', methods=['POST'])
@@ -50,6 +80,15 @@ def labellize():
     # https://developer.github.com/v3/activity/events/types/#projectcardevent
     payload = request.get_json()
     log.debug(u"Received payload:\n%s" % json.dumps(payload, indent=2))
+
+    provided_digest = request.headers.get('X-Hub-Signature')
+
+    h = hmac.new(GITHUB_SECRET, msg=request.get_data(), digestmod=sha1)
+    expected_digest = "sha1=%s" % h.hexdigest()
+    if not hmac.compare_digest(provided_digest, expected_digest):
+        log.error("Hub signature digest mismatch: %s != %s"
+                  % (provided_digest, expected_digest))
+        abort(403)
 
     if payload['action'] == 'moved':
         card_id = payload['project_card']['id']
