@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
 
+
 # IMPORTS #####################################################################
 
 import os
@@ -10,14 +11,14 @@ import logging
 import argparse
 
 from github import Github
-from subprocess import check_output
 from oauth2client.tools import argparser as youtube_argparser
 
 THIS_DIRECTORY = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(THIS_DIRECTORY, '..')))
 
-from lib.youtube import Caption, get_videos, parse_videos_from_json
 from lib.github import GITHUB_API_KEY
+from lib.common import get_downloaded_captions_and_videos
+
 
 # CONFIG ######################################################################
 
@@ -94,28 +95,11 @@ if __name__ == "__main__":
 
     caption_extension = args.extension
 
-    files_raw = check_output(
-        ["git add -n ."], shell=True, cwd=captions_directory
-    )
-    git_added_paths = re.findall("^add '(.+)'$", files_raw, flags=re.MULTILINE)
+    # BUSINESS ################################################################
 
-    if 0 == len(git_added_paths):
+    captions, videos = get_downloaded_captions_and_videos(captions_directory)
+    if 0 == len(captions):
         exit(0)
-
-    captions = []
-    for git_caption_path in git_added_paths:
-        m = re.search("([0-9]+)/([^/]+)$", git_caption_path)
-        if not m:
-            log.error("WTF %s" % git_caption_path)
-            exit(1)
-        caption_year, caption_filename = m.group(1, 2)
-        caption_path = os.path.join(
-            captions_directory, caption_year, caption_filename
-        )
-        captions.append(Caption.from_file(caption_path))
-
-    videos = get_videos([caption.video_id for caption in captions])
-    videos = parse_videos_from_json(videos)
 
     gh = Github(GITHUB_API_KEY)
     repo = gh.get_repo(args.repository)
@@ -127,19 +111,10 @@ if __name__ == "__main__":
         language = caption.language
         issue_title = "[subtitles] [%s] %s" % (language, video.title)
 
-        found = False
         for issue in issues:
             if issue.title == issue_title:
-                found = issue.number
+                output_lines.append(" Closes #%d." % issue.number)
                 break
-        if found:
-            output_lines.append(" Closes #%d." % found)
 
     if output_lines:
         print(''.join(output_lines))
-
-
-
-
-
-
