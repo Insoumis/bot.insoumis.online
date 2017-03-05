@@ -104,7 +104,7 @@ if __name__ == "__main__":
     languages = [
         {
             'short': 'fr',
-            'label': 'Language: French',
+            'label': u'⚑ Français',
             'column': '398411',
             'issue': u"""
 ## {video.title}
@@ -121,7 +121,7 @@ if __name__ == "__main__":
         ,
         {
             'short': 'en',
-            'label': 'Language: English',
+            'label': u'⚑ English',
             'column': '387590',
             'issue': u"""
 ## {video.title}
@@ -199,7 +199,9 @@ if __name__ == "__main__":
 
     labels = {}
     for language in languages:
-        labels[language['short']] = repo.get_label(language['label'])
+        labels[language['short']] = repo.get_label(
+            language['label'].encode('utf-8')
+        )
     label_start = repo.get_label('Process: [0] Awaiting subtitles')
 
     if args.videos:
