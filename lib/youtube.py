@@ -145,7 +145,7 @@ def get_authenticated_service(_args):
 
 # YOUTUBE API REQUESTS ########################################################
 
-def get_latest_videos_of_channel(channel_id, cap=10, since_minutes_ago=120):
+def get_latest_videos_of_channel(channel_id, cap=10, since_minutes_ago=300):
     assert cap < 51  # 50 is the highest authorized value in 2017
     t = datetime.datetime.now() - datetime.timedelta(minutes=since_minutes_ago)
     t = strict_rfc3339.timestamp_to_rfc3339_utcoffset(int(t.strftime("%s")))
