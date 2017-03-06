@@ -16,12 +16,12 @@ from lib.github import GITHUB_API_KEY
 THIS_DIRECTORY = os.path.abspath(os.path.dirname(__file__))
 GITHUB_REPO = "jlm2017/jlm-video-subtitles"
 
-LABELS_COLUMNS = [                    # [fr, en, de]
-    ("Process: [0] Awaiting subtitles", [398411, 387590, 654910]),
-    ("Process: [1] Writing in progress", [398412, 387592, 654907]),
-    ("Process: [2] Ready for review (1)", [398414, 654829, 654913]),
-    ("Process: [4] Ready for review (2)", [398416, 387597, 654916]),
-    ("Process: [6] Approved", [398417, 390130, 654919]),
+LABELS_COLUMNS = [              # [fr, en, de]
+    (u"⚙ [0] Awaiting subtitles", [398411, 387590, 654910]),
+    (u"⚙ [1] Writing in progress", [398412, 387592, 654907]),
+    (u"⚙ [2] First review", [398414, 654829, 654913]),
+    (u"⚙ [3] Second review", [398416, 387597, 654916]),
+    (u"⚙ [4] Approved", [398417, 390130, 654919]),
 ]
 
 
@@ -133,12 +133,27 @@ def labellize():
 
         for label in labels_to_remove:
             log.info(u"Added '%s' to issue #%d" % (label, issue_number))
-            issue.remove_from_labels(label)
+            issue.remove_from_labels(label.encode('utf-8'))
         for label in labels_to_add:
             log.info(u"Removed '%s' from issue #%d" % (label, issue_number))
-            issue.add_to_labels(label)
+            issue.add_to_labels(label.encode('utf-8'))
 
     return ''
+
+
+# @app.route('/labellize', methods=['POST'])
+# def labellize():
+#     """
+#     A github webhook to receive a project_card event.
+#     When a project card has been moved, update its associated issue's labels.
+#     :return:
+#     """
+#     # https://developer.github.com/v3/activity/events/types/#projectcardevent
+#     payload = request.get_json(silent=True)
+#     if not payload:
+#         log.error(u"Invalid payload:\n%s" % request.get_data())
+#         abort(400)
+#     log.debug(u"Received payload:\n%s" % json.dumps(payload, indent=2))
 
 
 @app.route('/favicon.ico')

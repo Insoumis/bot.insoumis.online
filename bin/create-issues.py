@@ -202,7 +202,7 @@ if __name__ == "__main__":
         labels[language['short']] = repo.get_label(
             language['label'].encode('utf-8')
         )
-    label_start = repo.get_label('Process: [0] Awaiting subtitles')
+    label_start = repo.get_label(u'⚙ [0] Awaiting subtitles'.encode('utf-8'))
 
     if args.videos:
         print(
