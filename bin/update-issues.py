@@ -144,6 +144,9 @@ if __name__ == "__main__":
             {"Accept": GITHUB_ACCEPT}
         )
         for card_data in data:
+            if 'content_url' not in card_data:
+                # We have cards that are not linked to issues. Ignore them.
+                continue
             m = re.search("([0-9]+)$", card_data['content_url'])
             if not m:
                 log.warn("Card #%d has un-parsable content url '%s'."
