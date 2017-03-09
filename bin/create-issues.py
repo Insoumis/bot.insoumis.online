@@ -222,9 +222,8 @@ if __name__ == "__main__":
     videos = parse_videos_from_json(jsonResponse)
 
     for video in videos:
-        # Skip live videos (duration is zero)
         if video.duration is None or video.duration == 0:
-            continue
+            continue  # Skip live videos (duration is zero)
 
         for language in languages:
             issue_title = "[subtitles] [%s] %s" % \

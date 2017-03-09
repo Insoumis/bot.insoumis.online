@@ -1,4 +1,7 @@
 # coding=utf-8
+
+# Basically a listener for events sent by github (and maybe youtube, later on).
+
 import re
 import os
 import json
@@ -8,14 +11,15 @@ from hashlib import sha1
 from flask import Flask, send_from_directory, request, abort
 from github import Github
 
+# Local imports work because of sys.path tweaking done in bot.wsgi
 from lib.github import GITHUB_API_KEY
 
 
 # CONFIG ######################################################################
 
 THIS_DIRECTORY = os.path.abspath(os.path.dirname(__file__))
-GITHUB_REPO = "jlm2017/jlm-video-subtitles"
 
+GITHUB_REPO = "jlm2017/jlm-video-subtitles"
 LABELS_COLUMNS = [              # [fr, en, de]
     (u"⚙ [0] Awaiting subtitles", [398411, 387590, 654910]),
     (u"⚙ [1] Writing in progress", [398412, 387592, 654907]),
@@ -29,6 +33,7 @@ LABELS_COLUMNS = [              # [fr, en, de]
 
 app = Flask('RobotInsoumis', root_path=THIS_DIRECTORY)
 app.debug = os.environ.get('DEBUG') == 'true'
+
 
 # SECRET ######################################################################
 
@@ -89,10 +94,10 @@ def labellize():
     provided_digest = request.headers.get('X-Hub-Signature', default='')
     h = hmac.new(GITHUB_SECRET, msg=request.get_data(), digestmod=sha1)
     expected_digest = "sha1=%s" % h.hexdigest()
+    # if not hmac.compare_digest(provided_digest, expected_digest):
     # hmac.compare_digest is not available for python 2.7.3
     # and I'm too lazy/scared to mess with my server.
-    # if not hmac.compare_digest(provided_digest, expected_digest):
-    # it's okay if someone uses time attacks to guess our secret
+    # It's okay if someone uses time attacks to guess our secret.
     if provided_digest != expected_digest:
         log.error(u"Hub signature digest mismatch: %s != %s"
                   % (provided_digest, expected_digest))
@@ -104,7 +109,7 @@ def labellize():
         content_url = payload['project_card']['content_url']
         m = re.search("([0-9]+)$", content_url)
         if not m:
-            # It's probably not an issue card, but a standalone card
+            # It's probably not an issue card, but a standalone card.
             log.warn(u"No issue id in content url '%s' for card %d.",
                      (content_url, card_id))
             return ''
@@ -141,19 +146,37 @@ def labellize():
     return ''
 
 
-# @app.route('/labellize', methods=['POST'])
-# def labellize():
+# @app.route('/webhook/youtube', methods=['POST'])
+# def webhook_youtube():
 #     """
-#     A github webhook to receive a project_card event.
-#     When a project card has been moved, update its associated issue's labels.
-#     :return:
+#     A youtube webhook that receives an Atom feed whenever a new video has been
+#     published.
+#     It creates an issue for each configured language on github.
+#     https://developers.google.com/youtube/v3/guides/push_notifications
 #     """
-#     # https://developer.github.com/v3/activity/events/types/#projectcardevent
-#     payload = request.get_json(silent=True)
-#     if not payload:
-#         log.error(u"Invalid payload:\n%s" % request.get_data())
-#         abort(400)
-#     log.debug(u"Received payload:\n%s" % json.dumps(payload, indent=2))
+#     # fixme
+#     payload = request.get_data()
+#     log.info(u"Received youtube payload:\n%s" % payload)
+#
+#     import feedparser
+#     try:
+#         d = feedparser.parse(payload)
+#         video_id = d['entries'][0]['yt_videoid']
+#         log.info("Video %s was published or updated." % video_id)
+#         published = d['entries'][0]['published_parsed']
+#         updated = d['entries'][0]['updated_parsed']
+#         if published == updated:
+#             log.info("Video %s was PUBLISHED." % video_id)
+#         else:
+#             log.info("Video %s was UPDATED." % video_id)
+#
+#     except Exception as e:
+#         log.error(e.message)
+#         log.error(e)
+
+    # if not payload:
+    #     log.error(u"Invalid youtube payload:\n%s" % request.get_data())
+    #     abort(400)
 
 
 @app.route('/favicon.ico')
