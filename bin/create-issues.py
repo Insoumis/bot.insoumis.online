@@ -22,12 +22,10 @@ sys.path.append(os.path.abspath(os.path.join(THIS_DIRECTORY, '..')))
 from lib.youtube import get_authenticated_service, get_videos, \
     parse_videos_from_json, get_latest_videos_of_channel
 
-from lib.github import GITHUB_API_KEY
+from lib.github import GITHUB_API_KEY, LANGUAGES
 
 # use Colorama to make Termcolor work on all platforms
 init()
-
-THIS_DIRECTORY = os.path.abspath(os.path.dirname(__file__))
 
 
 ###############################################################################
@@ -86,6 +84,18 @@ if __name__ == "__main__":
     )
 
     argparser.add_argument(
+        "-l", "--lang", "--languages",
+        dest="languages",
+        nargs="+",
+        metavar="LANGUAGE",
+        help="""
+        Short version of the language to create the issue for. Eg: en.
+        You can specify multiple language codes. (separated by whitespaces)
+        Defaults to all configured languages : %s.
+        """ % ' '.join([l['short'] for l in LANGUAGES])
+    )
+
+    argparser.add_argument(
         "-?", "-h", "--help", dest="help", action="store_true",
         help="Display this documentation and exit."
     )
@@ -97,58 +107,22 @@ if __name__ == "__main__":
         argparser.print_help()
         argparser.exit(0)
 
+    # SANITIZATION ############################################################
+
+    languages = []
+    if args.languages:
+        languages = [l for l in LANGUAGES if l['short'] in args.languages]
+        if len(languages) != len(args.languages):
+            cprint("One of the provided --languages is not supported.", "red")
+            exit(1)
+    else:
+        languages = LANGUAGES
+
+    # BUSINESS ################################################################
+
     cprint("Authenticating with YouTube...", "yellow")
 
     youtube = get_authenticated_service(args)
-
-    languages = [
-        {
-            'short': 'fr',
-            'label': u'⚑ Français',
-            'column': '398411',
-            'issue': u"""
-## {video.title}
-
-&nbsp;          | Info
---------------- | ---------------
-**Date**        | {video.day_fr}
-**Durée**       | {video.duration} :clock7:
-**Langue**      | Français :fr:
-**Vidéo**       | [Voir dans YouTube :arrow_upper_right:](https://www.youtube.com/watch?v={video.yid})
-**Sous-titres** | [Éditer dans YouTube :arrow_upper_right:](https://www.youtube.com/timedtext_editor?v={video.yid}&tab=captions&bl=vmp&action_mde_edit_form=1&lang=fr&ui=hd)
-"""
-        }
-        ,
-        {
-            'short': 'en',
-            'label': u'⚑ English',
-            'column': '387590',
-            'issue': u"""
-## {video.title}
-
-&nbsp;        | Info
-------------- | -------------
-**Date**      | {video.day_en}
-**Duration**  | {video.duration} :clock7:
-**Language**  | English :gb:
-**Video**     | [See it on YouTube :arrow_upper_right:](https://www.youtube.com/watch?v={video.yid})
-**Subtitles** | [Edit them in YouTube :arrow_upper_right:](https://www.youtube.com/timedtext_editor?v={video.yid}&tab=captions&bl=vmp&action_mde_edit_form=1&lang=en&ui=hd)
-"""
-        }
-        #             ,
-        #             {
-        #                 'short': 'de',
-        #                 'label': 'Language: German',
-        #                 'column': '654910',
-        #                 'issue': u"""
-        # Titel | {video.title}
-        # ----- | -----
-        # Dauer | {video.duration}
-        # Sprache | German
-        # Verweise | [VIDEO](https://www.youtube.com/watch?v={video.yid}) - [EDITOR](https://www.youtube.com/timedtext_editor?v={video.yid}&tab=captions&bl=vmp&action_mde_edit_form=1&lang=en&ui=hd)
-        # """
-        #             }
-    ]
 
     print("Collecting issues of repository %s..."
           % colored(args.repository, "yellow"))
@@ -226,6 +200,7 @@ if __name__ == "__main__":
             continue  # Skip live videos (duration is zero)
 
         for language in languages:
+
             issue_title = "[subtitles] [%s] %s" % \
                           (language['short'], video.title)
 
