@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <title>{% block title %}Welcome{% endblock %} &mdash; {{ config.metas.title }}</title>
+
+    <meta name="description" content="{{ config.metas.description }}">
+    <meta name="keywords"    content="{{ config.metas.keywords | join(', ') }}">
+    <meta name="author"      content="Goutte">
+
+{#    <meta name="viewport" content="width=device-width, initial-scale=1">#}
+
+{#    <link rel="stylesheet" type="text/css" href="static/css/main.css">#}
+{% block styles %}{% endblock %}
+
+{#    <script type="text/javascript">#}
+{#      // Good javascript is no javascript -- hurray! \o/#}
+{#    </script>#}
+{% block scripts %}{% endblock %}
+  </head>
+
+  <body>
+
+    <div id="page-container" class="container">
+
+      <div id="content">
+{% block content %}
+        <p>Please override the "content" block in the page template.</p>
+{% endblock %}
+      </div>
+
+    </div>
+
+  </body>
+</html>

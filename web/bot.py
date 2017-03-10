@@ -4,21 +4,42 @@
 
 import re
 import os
+import sys
 import json
 import hmac
-import logging as log
+import yaml
+import random
+import datetime
+import logging
 from hashlib import sha1
-from flask import Flask, send_from_directory, request, abort
+from flask import Flask, send_from_directory, request, abort, url_for
+from jinja2 import Environment, FileSystemLoader
 from github import Github
 from subprocess import check_output, CalledProcessError
 
-# Local imports work because of sys.path tweaking done in bot.wsgi
+ROOT_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+if ROOT_DIR not in sys.path:
+    sys.path.append(ROOT_DIR)
+
 from lib.github import GITHUB_API_KEY, LANGUAGES
 
 
-# CONFIG ######################################################################
-
+# PATH RELATIVITY #############################################################
 THIS_DIRECTORY = os.path.abspath(os.path.dirname(__file__))
+
+
+def get_path(relative_path):
+    return os.path.abspath(os.path.join(THIS_DIRECTORY, relative_path))
+
+
+# LOGGING #####################################################################
+
+log = logging.getLogger("Bot")
+log.setLevel(logging.INFO)
+log.addHandler(logging.FileHandler(get_path('bot.log')))
+
+
+# CONFIG ######################################################################
 
 GITHUB_REPO = "jlm2017/jlm-video-subtitles"
 LABELS_COLUMNS = [              # [fr, en, de]
@@ -28,6 +49,10 @@ LABELS_COLUMNS = [              # [fr, en, de]
     (u"⚙ [3] Second review", [398416, 387597, 654916]),
     (u"⚙ [4] Approved", [398417, 390130, 654919]),
 ]
+
+# There's no YAML support in Flask (yet) so we make our own.
+with open(get_path('config.yml')) as f:
+    config = yaml.load(f)
 
 
 # FLASK APP ###################################################################
@@ -60,22 +85,82 @@ except IOError:
     exit(1)
 
 
-# UTILS #######################################################################
+# SETUP JINJA2 TEMPLATE ENGINE ################################################
 
-log.basicConfig(
-    filename=os.path.join(app.root_path, 'bot.log'),
-    level=log.INFO
+def markdown_filter(value, nl2br=False, p=True):
+    """
+    nl2br: set to True to replace line breaks with <br> tags
+    p: set to False to remove the enclosing <p></p> tags
+    """
+    from markdown import markdown
+    from markdown.extensions.nl2br import Nl2BrExtension
+    from markdown.extensions.abbr import AbbrExtension
+    extensions = [AbbrExtension()]
+    if nl2br is True:
+        extensions.append(Nl2BrExtension())
+    markdowned = markdown(value, output_format='html5', extensions=extensions)
+    if p is False:
+        markdowned = markdowned.replace(r"<p>", "").replace(r"</p>", "")
+    return markdowned
+
+
+def shuffle_filter(seq):
+    """
+    This shuffles the sequence it is applied to.
+    'tis a failure of jinja2 to not provide a shuffle filter by default.
+    """
+    try:
+        result = list(seq)
+        random.shuffle(result)
+        return result
+    except:
+        return seq
+
+
+tpl_engine = Environment(
+    loader=FileSystemLoader([get_path('view')]),
+    trim_blocks=True,
+    lstrip_blocks=True,
 )
+
+tpl_engine.globals.update(
+    url_for=url_for,
+)
+
+tpl_engine.filters['md'] = markdown_filter
+tpl_engine.filters['markdown'] = markdown_filter
+tpl_engine.filters['shuffle'] = shuffle_filter
+
+tpl_global_vars = {
+    'config': config,
+    'request': request,
+    # 'version': version,
+    'now': datetime.datetime.now(),
+}
+
+
+# HELPERS #####################################################################
+
+def render_view(view, context=None):
+    """
+    A simple helper to render [view] template with [context] vars.
+    It automagically adds the global template vars defined above, too.
+    It returns a string, usually the HTML contents to display.
+
+    We're not using flask's render_template because we want more flexibility.
+    """
+    if context is None:
+        context = {}
+    return tpl_engine.get_template(view).render(
+        dict(tpl_global_vars.items() + context.items())
+    )
 
 
 # ROUTES ######################################################################
 
 @app.route('/')
 def home():
-    return u"Can't stenchon the mélenchon! " \
-           u"<a href=\"https://github.com/Goutte/youtube-captions-bot\">" \
-           u"View the source." \
-           u"</a>"
+    return render_view("home.html.jinja2")
 
 
 @app.route('/labellize', methods=['POST'])
@@ -217,7 +302,10 @@ def favicon():
     )
 
 
-# MAIN ########################################################################
+# RUNNER FOR DEVELOPMENT ######################################################
 
 if __name__ == "__main__":
-    app.run(debug=True)  # This is not used in the production env anyways
+    # We add the YAML config file to the list of files to watch for automatic
+    # reload of the development server.
+    extra_files = [get_path('config.yml')]
+    app.run(debug=True, extra_files=extra_files)

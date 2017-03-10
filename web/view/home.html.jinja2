@@ -1,0 +1,71 @@
+{% extends 'layout.html.jinja2' %}
+
+{% block title %}Home{% endblock %}
+
+{% block styles %}
+{#    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">#}
+    <link href="https://fonts.googleapis.com/css?family=Nova+Mono" rel="stylesheet">
+    <style>
+        body {
+            color: #eee;
+            font-family: 'Nova Mono', monospace;
+{#            font-family: 'Roboto', sans-serif;#}
+            text-align: center;
+            background-color: #c5422e;
+            background-image: url({{ url_for('static', filename='img/fi.png') }});
+            background-size: 30%;
+            background-repeat: no-repeat;
+            background-position: 50% 2em;
+        }
+        h1 {
+            text-transform: uppercase;
+        }
+        a {
+            color: #eee;
+            text-decoration: dotted underline;
+        }
+        a:hover {
+            text-decoration: solid underline;
+        }
+        a.github-banner > img {
+            transition: 150ms all;
+        }
+        a.github-banner:hover > img {
+            top: -10px !important;
+            left: -10px !important;
+        }
+    </style>
+{% endblock %}
+
+{#############################################################################}
+
+{% block content %}
+
+    <a class="github-banner" href="https://github.com/Insoumis/bot.insoumis.online"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png"></a>
+
+    <h1>Can't stenchon the mélenchon</h1>
+
+    <p>
+        Bonjour !
+        Je suis un robot insoumis.
+        <br>
+        <br>
+        J'automatise la sauvegarde des
+        <a href="https://github.com/jlm2017/jlm-video-subtitles/tree/master/subtitles/2017">fichiers de sous-titres</a>
+        des vidéos de la
+        <a href="https://www.youtube.com/user/PlaceauPeuple">chaîne de Jean-Luc Mélenchon</a>.
+        <br>
+        Je m'occupe aussi de créer et entretenir les
+        <a href="https://github.com/jlm2017/jlm-video-subtitles/projects/2">tâches de traduction</a>
+        pour permettre aux sous-titreur⋅e⋅s de collaborer.
+        <br>
+        <br>
+        Tout ça a lieu automatiquement, c'est pourquoi il n'y a rien à voir ici.
+        <br>
+        <br>
+        <br>
+        Si vous avez des idées sur ce que je pourrais faire,
+        <a href="https://github.com/Insoumis/bot.insoumis.online/issues/new">faites-les moi connaître</a> !
+    </p>
+
+{% endblock %}
