@@ -113,7 +113,7 @@ if __name__ == "__main__":
     if args.languages:
         languages = [l for l in LANGUAGES if l['short'] in args.languages]
         if len(languages) != len(args.languages):
-            cprint("One of the provided --languages is not supported.", "red")
+            cprint("One of the provided languages is not supported.", "red")
             exit(1)
     else:
         languages = LANGUAGES
@@ -191,9 +191,16 @@ if __name__ == "__main__":
         jsonResponse = get_latest_videos_of_channel(args.channel)
         videos = parse_videos_from_json(jsonResponse)
         ids = [video.yid for video in videos]
+        if 0 == len(videos):
+            print("No recent videos were found.")
+            exit(0)
 
     jsonResponse = get_videos(ids)
     videos = parse_videos_from_json(jsonResponse)
+
+    if 0 == len(videos):
+        print("No videos were found for ids %s." % ', '.join(ids))
+        exit(0)
 
     for video in videos:
         if video.duration is None or video.duration == 0:
@@ -234,8 +241,5 @@ if __name__ == "__main__":
                     },
                     headers={"Accept": GITHUB_ACCEPT}
                 )
-
-    if 0 == len(videos):
-        print("No recent videos were found.")
 
     cprint("Done!", "green")

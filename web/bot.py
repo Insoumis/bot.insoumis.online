@@ -10,9 +10,10 @@ import logging as log
 from hashlib import sha1
 from flask import Flask, send_from_directory, request, abort
 from github import Github
+from subprocess import check_output, CalledProcessError
 
 # Local imports work because of sys.path tweaking done in bot.wsgi
-from lib.github import GITHUB_API_KEY
+from lib.github import GITHUB_API_KEY, LANGUAGES
 
 
 # CONFIG ######################################################################
@@ -177,6 +178,35 @@ def labellize():
     # if not payload:
     #     log.error(u"Invalid youtube payload:\n%s" % request.get_data())
     #     abort(400)
+
+
+@app.route('/issue/<language>/<video>')
+def create_issue(language, video):
+    """
+    Create a new issue for the video with youtube id <video>.
+    Language may be fr or en, see LANGUAGES in lib.github.py.
+    """
+    if not re.match("^[a-zA-Z-]{2,5}$", language):
+        log.error("Wrong language: %s" % language)
+        abort(400)
+    if not re.match("^[a-zA-Z0-9._-]{5,}$", video):
+        log.error("Wrong video id: %s" % video)
+        abort(400)
+
+    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
+    try:
+        out_raw = check_output(
+            [
+                "bin/create-issues.sh --languages %s --videos %s"
+                % (language, video),
+            ],
+            shell=True, cwd=root_dir
+        )
+    except CalledProcessError as e:
+        out_raw = "%s" % e.output
+
+    return "<pre>%s</pre>" % out_raw
 
 
 @app.route('/favicon.ico')
