@@ -109,14 +109,17 @@ if __name__ == "__main__":
 
     # SANITIZATION ############################################################
 
-    languages = []
+    languages = ['fr']
     if args.languages:
-        languages = [l for l in LANGUAGES if l['short'] in args.languages]
-        if len(languages) != len(args.languages):
-            cprint("One of the provided languages is not supported.", "red")
-            exit(1)
-    else:
-        languages = LANGUAGES
+        languages = args.languages
+
+    languages = [l for l in LANGUAGES if l['short'] in languages]
+    if len(languages) == 0:
+        cprint("Provided language is not supported.\n"
+               "Supported langauges: %s"
+               % ', '.join([l['short'] for l in LANGUAGES]),
+               "red")
+        exit(1)
 
     # BUSINESS ################################################################
 
@@ -154,7 +157,7 @@ if __name__ == "__main__":
     # Useful to get the IDs of the Columns
     # headers, data = rq.requestJsonAndCheck(
     #     "GET",
-    #     "/projects/%s/columns" % '206437',
+    #     "/projects/%s/columns" % '373426',
     #     None,
     #     {"Accept": GITHUB_ACCEPT}
     # )

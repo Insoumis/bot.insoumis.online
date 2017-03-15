@@ -265,11 +265,11 @@ def labellize():
     #     abort(400)
 
 
-@app.route('/issue/<language>/<video>')
+@app.route('/captions/create/<language>/<video>')
 def create_issue(language, video):
     """
     Create a new issue for the video with youtube id <video>.
-    Language may be fr or en, see LANGUAGES in lib.github.py.
+    Language may be fr or en or zh, see LANGUAGES in lib.github.py.
     """
     if not re.match("^[a-zA-Z-]{2,5}$", language):
         log.error("Wrong language: %s" % language)

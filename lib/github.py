@@ -70,18 +70,39 @@ LANGUAGES = [
 **Subtitles** | [Edit them in YouTube :arrow_upper_right:](https://www.youtube.com/timedtext_editor?v={video.yid}&tab=captions&bl=vmp&action_mde_edit_form=1&lang=en&ui=hd)
 """
     }
-    #             ,
-    #             {
-    #                 'short': 'de',
-    #                 'label': 'Language: German',
-    #                 'column': '654910',
-    #                 'issue': u"""
-    # Titel | {video.title}
-    # ----- | -----
-    # Dauer | {video.duration}
-    # Sprache | German
-    # Verweise | [VIDEO](https://www.youtube.com/watch?v={video.yid}) - [EDITOR](https://www.youtube.com/timedtext_editor?v={video.yid}&tab=captions&bl=vmp&action_mde_edit_form=1&lang=en&ui=hd)
-    # """
-    #             }
+    ,
+    {
+        'short': 'de',
+        'label': u'⚑ Deutsche',
+        'column': '654910',
+        'issue': u"""
+## {video.title}
+
+&nbsp;         | Info
+-------------- | -------------
+**Datum**      | {video.day_en}
+**Dauer**      | {video.duration} :clock7:
+**Sprache**    | Deutsche :de:
+**Video**      | [See it on YouTube :arrow_upper_right:](https://www.youtube.com/watch?v={video.yid})
+**Untertitel** | [Edit them in YouTube :arrow_upper_right:](https://www.youtube.com/timedtext_editor?v={video.yid}&tab=captions&bl=vmp&action_mde_edit_form=1&lang=de&ui=hd)
+"""
+    }
+    ,
+    {
+        'short': 'zh',
+        'label': u'⚑ Chinese',  # 中国, but github labels sorting sucks
+        'column': '654911',
+        'issue': u"""
+## {video.title}
+
+&nbsp;        | Info
+------------- | -------------
+**Date**      | {video.day_en}
+**Duration**  | {video.duration} :clock7:
+**Language**  | 中国 :zh:
+**Video**     | [See it on YouTube :arrow_upper_right:](https://www.youtube.com/watch?v={video.yid})
+**Subtitles** | [Edit them in YouTube :arrow_upper_right:](https://www.youtube.com/timedtext_editor?v={video.yid}&tab=captions&bl=vmp&action_mde_edit_form=1&lang=zh&ui=hd)
+"""
+    }
 ]
 
