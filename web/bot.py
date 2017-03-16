@@ -232,15 +232,16 @@ def labellize():
     return ''
 
 
+# This is never triggered. :(
 # @app.route('/webhook/youtube', methods=['POST'])
 # def webhook_youtube():
 #     """
-#     A youtube webhook that receives an Atom feed whenever a new video has been
+#     A youtube webhook receiving an Atom feed whenever a new video has been
 #     published.
 #     It creates an issue for each configured language on github.
 #     https://developers.google.com/youtube/v3/guides/push_notifications
 #     """
-#     # fixme
+#
 #     payload = request.get_data()
 #     log.info(u"Received youtube payload:\n%s" % payload)
 #
@@ -272,11 +273,13 @@ def create_issue(language, video):
     Language may be fr or en or zh, see LANGUAGES in lib.github.py.
     """
     if not re.match("^[a-zA-Z-]{2,5}$", language):
-        log.error("Wrong language: %s" % language)
-        abort(400)
+        msg = "Malformed language '%s'." % language
+        log.error(msg)
+        abort(400, description=msg)
     if not re.match("^[a-zA-Z0-9._-]{5,}$", video):
-        log.error("Wrong video id: %s" % video)
-        abort(400)
+        msg = "Malformed video id '%s'." % video
+        log.error(msg)
+        abort(400, description=msg)
 
     root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
