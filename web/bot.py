@@ -291,6 +291,7 @@ def create_issue(language, video):
             ],
             shell=True, cwd=root_dir
         )
+        log.info("Created '%s' issue for video '%s'." % (language, video))
     except CalledProcessError as e:
         out_raw = "%s" % e.output
 
