@@ -6,10 +6,11 @@
 
 ###############################################################################
 
-import argparse
-import sys
-
 import os
+import sys
+import argparse
+import datetime
+
 from pprint import pprint
 from colorama import init
 from github import Github, Requester
@@ -206,15 +207,19 @@ if __name__ == "__main__":
         exit(0)
 
     for video in videos:
-        if video.duration is None or video.duration == 0:
-            continue  # Skip live videos (duration is zero)
+        print("Handling video %s of duration %s :"
+              % (video.yid, str(video.duration)))
+
+        if video.duration is None or video.duration == datetime.timedelta(0):
+            cprint("  It's a live. Skipping...", "red")
+            continue
 
         for language in languages:
 
             issue_title = "[subtitles] [%s] %s" % \
                           (language['short'], video.title)
 
-            print("Looking for issue %s..."
+            print("  Looking for issue %s..."
                   % colored(issue_title, "yellow"))
 
             found = False
