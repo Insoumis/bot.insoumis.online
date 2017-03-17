@@ -99,7 +99,7 @@ LANGUAGES = [
 ------------- | -------------
 **Date**      | {video.day_en}
 **Duration**  | {video.duration} :clock7:
-**Language**  | 中国 :zh:
+**Language**  | 中国 :cn:
 **Video**     | [See it on YouTube :arrow_upper_right:](https://www.youtube.com/watch?v={video.yid})
 **Subtitles** | [Edit them in YouTube :arrow_upper_right:](https://www.youtube.com/timedtext_editor?v={video.yid}&tab=captions&bl=vmp&action_mde_edit_form=1&lang=zh&ui=hd)
 """
