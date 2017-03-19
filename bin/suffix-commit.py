@@ -23,7 +23,7 @@ from lib.common import get_downloaded_captions_and_videos, remove_country_code
 # CONFIG ######################################################################
 
 logging.basicConfig(format='%(message)s')
-log = logging.getLogger('Issue #numbers retriever')
+log = logging.getLogger('Suffix Commit')
 
 
 # MAIN ########################################################################
@@ -108,11 +108,17 @@ if __name__ == "__main__":
     output_lines = []
     for video, caption in zip(videos, captions):
 
+        # We're not relying only on issue title anymore as it may have changed.
+        # We also rely on the video id that we parse from the issue content.
         language = remove_country_code(caption.language)
-        issue_title = "[subtitles] [%s] %s" % (language, video.title)
+        issue_title_prefix = "[subtitles] [%s]" % language
+        r = re.compile(r"https://www\.youtube\.com/watch\?v=([a-zA-Z0-9._-]+)")
 
         for issue in issues:
-            if issue.title == issue_title:
+            matches = r.search(issue.body)
+            if matches is not None \
+                    and matches.group(1) == video.yid \
+                    and issue.title.startswith(issue_title_prefix):
                 output_lines.append(" Closes #%d." % issue.number)
                 break
 
