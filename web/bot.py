@@ -42,12 +42,12 @@ log.addHandler(logging.FileHandler(get_path('bot.log')))
 # CONFIG ######################################################################
 
 GITHUB_REPO = "jlm2017/jlm-video-subtitles"
-LABELS_COLUMNS = [              # [fr, en, de]
-    (u"⚙ [0] Awaiting subtitles", [398411, 387590, 654910]),
-    (u"⚙ [1] Writing in progress", [398412, 387592, 654907]),
-    (u"⚙ [2] First review", [398414, 654829, 654913]),
-    (u"⚙ [3] Second review", [398416, 387597, 654916]),
-    (u"⚙ [4] Approved", [398417, 390130, 654919]),
+LABELS_COLUMNS = [              # [fr, en, de, zh]
+    (u"⚙ [0] Awaiting subtitles", [398411, 387590, 654910, 654911]),
+    (u"⚙ [1] Writing in progress", [398412, 387592, 654907, 654908]),
+    (u"⚙ [2] First review", [398414, 654829, 654913, 654914]),
+    (u"⚙ [3] Second review", [398416, 387597, 654916, 654917]),
+    (u"⚙ [4] Approved", [398417, 390130, 654919, 654920]),
 ]
 
 # There's no YAML support in Flask (yet) so we make our own.
