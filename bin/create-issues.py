@@ -151,14 +151,14 @@ if __name__ == "__main__":
     #     "GET",
     #     "/repos/%s/projects" % args.repository,
     #     None,
-    #     {"Accept": GITHUB_ACCEPT}
+    #     {"Accept": GITHUB_ACCEPT}k
     # )
     # pprint(data)
 
     # Useful to get the IDs of the Columns
     # headers, data = rq.requestJsonAndCheck(
     #     "GET",
-    #     "/projects/%s/columns" % '373426',
+    #     "/projects/%s/columns" % '373391',
     #     None,
     #     {"Accept": GITHUB_ACCEPT}
     # )

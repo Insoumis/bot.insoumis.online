@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # coding=utf-8
 
+# Updates the issues's card by moving them to the last column if
+# the related caption has been published and subsequently downloaded.
 
 # IMPORTS #####################################################################
 
@@ -25,9 +27,11 @@ logging.basicConfig(format='%(message)s')
 log = logging.getLogger('Issue updater')
 
 APPROVAL_COLUMNS = {
-    'fr': 398417,
-    'en': 390130,
     'de': 654919,
+    'en': 390130,
+    'fr': 398417,
+    'pt': 654918,
+    'zh': 654920,
 }
 
 # The GitHub Projects API is still in development

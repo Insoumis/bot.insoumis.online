@@ -36,6 +36,16 @@ except IOError:
 
 ###############################################################################
 
+GITHUB_REPO = "jlm2017/jlm-video-subtitles"
+
+LABELS_COLUMNS = [              # [fr, en, de, pt, zh]
+    (u"⚙ [0] Awaiting subtitles", [398411, 387590, 654910, 654905, 654911]),
+    (u"⚙ [1] Writing in progress", [398412, 387592, 654907, 654906, 654908]),
+    (u"⚙ [2] First review", [398414, 654829, 654913, 654912, 654914]),
+    (u"⚙ [3] Second review", [398416, 387597, 654916, 654915, 654917]),
+    (u"⚙ [4] Approved", [398417, 390130, 654919, 654918, 654920]),
+]
+
 LANGUAGES = [
     {
         'short': 'fr',
@@ -85,6 +95,23 @@ LANGUAGES = [
 **Sprache**    | Deutsche :de:
 **Video**      | [See it on YouTube :arrow_upper_right:](https://www.youtube.com/watch?v={video.yid})
 **Untertitel** | [Edit them in YouTube :arrow_upper_right:](https://www.youtube.com/timedtext_editor?v={video.yid}&tab=captions&bl=vmp&action_mde_edit_form=1&lang=de&ui=hd)
+"""
+    }
+    ,
+    {
+        'short': 'pt',
+        'label': u'⚑ Português',
+        'column': '654905',
+        'issue': u"""
+## {video.title}
+
+&nbsp;         | Info
+-------------- | -------------
+**Datum**      | {video.day_en}
+**Dauer**      | {video.duration} :clock7:
+**Sprache**    | Português :pt:
+**Video**      | [See it on YouTube :arrow_upper_right:](https://www.youtube.com/watch?v={video.yid})
+**Untertitel** | [Edit them in YouTube :arrow_upper_right:](https://www.youtube.com/timedtext_editor?v={video.yid}&tab=captions&bl=vmp&action_mde_edit_form=1&lang=pt&ui=hd)
 """
     }
     ,
