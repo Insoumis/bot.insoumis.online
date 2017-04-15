@@ -167,7 +167,7 @@ if __name__ == "__main__":
     # List cards of a Column
     # headers, data = rq.requestJsonAndCheck(
     #     "GET",
-    #     "/projects/columns/%s/cards" % '398411',
+    #     "/projects/columns/%s/cards" % '910796',
     #     None,
     #     {"Accept": GITHUB_ACCEPT}
     # )

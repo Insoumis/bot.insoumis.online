@@ -39,7 +39,7 @@ except IOError:
 GITHUB_REPO = "jlm2017/jlm-video-subtitles"
 
 LABELS_COLUMNS = [              # [fr, en, de, pt, zh]
-    (u"⚙ [0] Awaiting subtitles", [398411, 387590, 654910, 654905, 654911]),
+    (u"⚙ [0] Awaiting subtitles", [910796, 387590, 654910, 654905, 654911]),
     (u"⚙ [1] Writing in progress", [398412, 387592, 654907, 654906, 654908]),
     (u"⚙ [2] First review", [398414, 654829, 654913, 654912, 654914]),
     (u"⚙ [3] Second review", [398416, 387597, 654916, 654915, 654917]),
@@ -50,7 +50,7 @@ LANGUAGES = [
     {
         'short': 'fr',
         'label': u'⚑ Français',
-        'column': '398411',
+        'column': '910796',
         'issue': u"""
 ## {video.title}
 

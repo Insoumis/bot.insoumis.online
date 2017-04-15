@@ -136,9 +136,11 @@ if __name__ == "__main__":
     # This is such a hack... But hey, when life gives you lemons ; REROLL!
     cards = []  # array of dict {id: ?, issue_number: ?}
     columns = [  # all columns but the last one
-        398411, 398412, 398414, 398416,  # fr
+        910796, 398412, 398414, 398416,  # fr
         387590, 387592, 654829, 387597,  # en
         654910, 654907, 654913, 654916,  # de
+        654906, 654912, 654915, 654918,  # pt
+        654908, 654914, 654917, 654920,  # zh
     ]
     for column_id in columns:
         headers, data = rq.requestJsonAndCheck(
